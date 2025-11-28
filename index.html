@@ -1,153 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Meu Vídeo - Fullscreen on Click</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <title>Meu Vídeo</title>
   <style>
-    html, body {
-      height: 100%;
+    body {
       margin: 0;
-      background: #000;
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      height: 100%;
+      background-color: #000;
       display: flex;
-      align-items: center;
       justify-content: center;
-    }
-    video {
-      width: 80%;
-      max-width: 900px;
-      display: block;
+      align-items: center;
+      height: 100vh;
     }
 
-    /* overlay grande para forçar interação do usuário */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 40;
-      color: white;
-      flex-direction: column;
-      gap: 12px;
-      text-align: center;
-    }
-    .btn {
-      background: rgba(255,255,255,0.12);
-      border: 2px solid rgba(255,255,255,0.18);
-      padding: 18px 28px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 18px;
-      backdrop-filter: blur(4px);
-    }
-    .hint {
-      opacity: 0.9;
-      font-size: 14px;
+    video {
+      width: 80%;
+      max-width: 800px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <video id="meuVideo" autoplay loop muted playsinline controls>
-      <source src="video.mp4" type="video/mp4" />
-      Seu navegador não suporta a reprodução de vídeo.
-    </video>
-  </div>
-
-  <!-- overlay que exige um clique do usuário -->
-  <div id="overlay" class="overlay" role="dialog" aria-modal="true">
-    <div>
-      <button id="playBtn" class="btn">▶️ Reproduzir em Tela Cheia</button>
-      <div class="hint">Toque/click para iniciar. Alguns navegadores exigem interação do usuário para fullscreen.</div>
-    </div>
-  </div>
-
-  <script>
-    const video = document.getElementById('meuVideo');
-    const overlay = document.getElementById('overlay');
-    const playBtn = document.getElementById('playBtn');
-
-    async function enterFullscreen(el) {
-      // tenta API padrão
-      try {
-        if (el.requestFullscreen) {
-          await el.requestFullscreen();
-          return true;
-        }
-        if (el.webkitRequestFullscreen) { // Safari antigo / webkit
-          await el.webkitRequestFullscreen();
-          return true;
-        }
-        if (el.msRequestFullscreen) { // IE/Edge antiga
-          await el.msRequestFullscreen();
-          return true;
-        }
-      } catch (err) {
-        // continua para tentar outros fallbacks
-        // console.warn('requestFullscreen erro:', err);
-      }
-
-      // fallback: métodos de fullscreen do elemento vídeo em alguns WebKit (iOS/Android)
-      try {
-        if (video.webkitEnterFullscreen) { // iOS Safari / alguns webviews
-          video.webkitEnterFullscreen();
-          return true;
-        }
-      } catch (err) {
-        // nada a fazer
-      }
-      return false;
-    }
-
-    async function playAndFullscreen() {
-      // remove overlay imediatamente para melhorar UX
-      overlay.style.display = 'none';
-
-      // caso esteja pausado, force play (alguns navegadores exigem user gesture)
-      try {
-        await video.play();
-      } catch (playErr) {
-        // se play falhar, mostra overlay de novo e aborta
-        overlay.style.display = 'flex';
-        console.error('play() falhou:', playErr);
-        return;
-      }
-
-      const success = await enterFullscreen(video);
-      if (!success) {
-        // se não entrou em fullscreen, reexibe overlay com link/instrução
-        overlay.style.display = 'flex';
-        overlay.querySelector('.hint').textContent =
-          'Não foi possível entrar em tela cheia automaticamente — tente tocar no ícone de fullscreen do player.';
-      }
-    }
-
-    // clique no botão principal
-    playBtn.addEventListener('click', playAndFullscreen);
-
-    // alternativa: qualquer clique na tela faz o mesmo (útil em mobile)
-    function onAnyUserGesture() {
-      // remove o listener para não disparar novamente
-      document.removeEventListener('click', onAnyUserGesture);
-      document.removeEventListener('touchstart', onAnyUserGesture);
-      playAndFullscreen();
-    }
-    document.addEventListener('click', onAnyUserGesture, { once: true });
-    document.addEventListener('touchstart', onAnyUserGesture, { once: true });
-
-    // (opcional) se quiser tentar entrar em fullscreen quando o vídeo estiver pronto,
-    // mas isso ainda precisa de gesto do usuário — mantemos somente como tentativa
-    // video.addEventListener('canplay', () => { /* não fazemos request aqui sem gesto */ });
-  </script>
+  <video autoplay loop muted controls>
+    <source src="video.mp4" type="video/mp4">
+    Seu navegador não suporta a reprodução de vídeo.
+  </video>
 </body>
 </html>
-
-
 
 
