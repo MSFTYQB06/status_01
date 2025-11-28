@@ -24,7 +24,21 @@
     <source src="video.mp4" type="video/mp4">
     Seu navegador não suporta a reprodução de vídeo.
   </video>
+<script>
+    const video = document.getElementById("meuVideo");
+
+    // Tenta entrar em fullscreen assim que o vídeo puder ser reproduzido
+    video.addEventListener("canplay", () => {
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen();
+      } else if (video.msRequestFullscreen) {
+        video.msRequestFullscreen();
+      }
+    });
 </body>
 </html>
+
 
 
